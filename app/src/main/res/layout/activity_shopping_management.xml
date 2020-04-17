@@ -7,26 +7,23 @@
     android:orientation="vertical"
     tools:context=".ShoppingManagementActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="600dp">
+
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+            android:layout_height="250dp"
+            />
 
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="409dp"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Type Item" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Add an item"
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/button"

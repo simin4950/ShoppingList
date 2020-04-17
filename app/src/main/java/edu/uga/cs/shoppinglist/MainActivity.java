@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Log.d( DEBUG_TAG, "JobLead: MainActivity.onCreate()" );
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener( new SignInButtonClickListener() );
         registerButton.setOnClickListener( new RegisterButtonClickListener() );
 
+        FirebaseApp.initializeApp(this);
         // Check if user is signed in and if signed in, sign the user out before proceeding.
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();

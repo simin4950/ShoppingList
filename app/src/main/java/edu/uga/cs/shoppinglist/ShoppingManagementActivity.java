@@ -2,13 +2,27 @@ package edu.uga.cs.shoppinglist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShoppingManagementActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "ManagementActivity";
@@ -17,6 +31,15 @@ public class ShoppingManagementActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private Button addItem;
+    private EditText input;
+
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter recyclerAdapter;
+
+    private List<String> shoppingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +67,45 @@ public class ShoppingManagementActivity extends AppCompatActivity {
                 }
             }
         });
+        input =  findViewById(R.id.editText);
+        String item = input.getText().toString();
+        addItem = findViewById(R.id.button);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("item");
+        addItem.setOnClickListener(e -> {
+            myRef.push().setValue(item)
+            .addOnSuccessListener( new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // Show a quick confirmation
+                    Toast.makeText(getApplicationContext(), "Item added to shopping List! " + item,
+                            Toast.LENGTH_SHORT).show();
+
+                    // Clear the EditTexts for next use.
+                    input.setText("");
+
+                }
+            })
+                    .addOnFailureListener( new OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(getApplicationContext(), "FAILED to add item added to shopping List: " + item,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
+        //recyclerView = (RecyclerView) findViewById(R.id.view2);
+
+        // use a linear layout manager for the recycler view
+        layoutManager = new LinearLayoutManager(this );
+        recyclerView.setLayoutManager( layoutManager );
+
+        // get a Firebase DB instance reference
+
+        shoppingList = new ArrayList<String>();
+
+
     }
 
 
