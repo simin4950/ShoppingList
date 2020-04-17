@@ -33,14 +33,14 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
         public ShoppingListHolder(View itemView ) {
             super(itemView);
 
-            item = (TextView) itemView.findViewById(R.id.);
+            item = (TextView) itemView.findViewById(R.id.companyName);
 
         }
     }
 
     @Override
     public ShoppingListHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout., parent, false );
+        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.list_item, parent, false );
         return new ShoppingListHolder( view );
     }
 
@@ -51,7 +51,7 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
 
         Log.d( DEBUG_TAG, "onBindViewHolder: " + itemName );
 
-        holder.companyName.setText( itemName);
+        holder.item.setText( itemName);
     }
 
     @Override

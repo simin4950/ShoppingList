@@ -18,8 +18,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,12 +70,21 @@ public class ShoppingManagementActivity extends AppCompatActivity {
                 }
             }
         });
-        input =  findViewById(R.id.editText);
-        String item = input.getText().toString();
+
         addItem = findViewById(R.id.button);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("item");
+        recyclerView = (RecyclerView) findViewById(R.id.view2);
+
+        // use a linear layout manager for the recycler view
+        layoutManager = new LinearLayoutManager(this );
+        recyclerView.setLayoutManager( layoutManager );
+        shoppingList = new ArrayList<String>();
+
+
         addItem.setOnClickListener(e -> {
+            input =  findViewById(R.id.editText);
+            String item = input.getText().toString();
             myRef.push().setValue(item)
             .addOnSuccessListener( new OnSuccessListener<Void>() {
                 @Override
@@ -93,20 +105,45 @@ public class ShoppingManagementActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
+            finish();
+            startActivity(getIntent());
+
+
         });
+        myRef.addListenerForSingleValueEvent( new ValueEventListener() {
 
-        //recyclerView = (RecyclerView) findViewById(R.id.view2);
+            @Override
+            public void onDataChange( DataSnapshot snapshot ) {
+                // Once we have a DataSnapshot object, knowing that this is a list,
+                // we need to iterate over the elements and place them on a List.
+                Log.d( "ENTER", "ENTERED LISTENER ");
+                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
+                    String listItem = postSnapshot.getValue().toString();
+                    shoppingList.add(listItem);
+                    Log.d( DEBUG_TAG, "ShoppingManagementActivity.onCreate(): added: " + listItem );
+                }
+                Log.d( DEBUG_TAG, "ReviewJobLeadsActivity.onCreate(): setting recyclerAdapter" );
 
-        // use a linear layout manager for the recycler view
-        layoutManager = new LinearLayoutManager(this );
-        recyclerView.setLayoutManager( layoutManager );
+                // Now, create a JobLeadRecyclerAdapter to populate a ReceyclerView to display the job leads.
+                recyclerAdapter = new ShoppingListRecyclerAdapter( shoppingList);
+                recyclerView.setAdapter( recyclerAdapter );
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getMessage());
+            }
+        } );
+
+
 
         // get a Firebase DB instance reference
 
-        shoppingList = new ArrayList<String>();
+
+
 
 
     }
 
+    }
 
-}
+
