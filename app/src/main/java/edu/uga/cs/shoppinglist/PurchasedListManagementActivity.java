@@ -5,16 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,16 +20,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ShoppingManagementActivity extends AppCompatActivity {
+public class PurchasedListManagementActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "ManagementActivity";
 
     private TextView signedInTextView;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private Button addItem, purchaseList;
+    private Button settleButton;
     private EditText input;
 
 
@@ -41,12 +39,13 @@ public class ShoppingManagementActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter recyclerAdapter;
 
-    private List<String> shoppingList;
+    private List<String[]> purchasedList;
+    private HashMap<String, Double> hs = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shopping_management);
+        setContentView(R.layout.activity_purchased_list_management);
 
         signedInTextView = findViewById( R.id.costHeader);
 
@@ -70,67 +69,66 @@ public class ShoppingManagementActivity extends AppCompatActivity {
             }
         });
 
-        addItem = findViewById(R.id.button);
-        purchaseList = findViewById(R.id.settleButton);
+        settleButton = findViewById(R.id.settleButton);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("item");
+        DatabaseReference myRef = database.getReference("purchased");
         recyclerView = (RecyclerView) findViewById(R.id.settleView);
 
         // use a linear layout manager for the recycler view
         layoutManager = new LinearLayoutManager(this );
         recyclerView.setLayoutManager( layoutManager );
-        shoppingList = new ArrayList<String>();
+        purchasedList = new ArrayList<>();
+
+        settleButton.setOnClickListener(e-> {
+            for (int i = 0; i < purchasedList.size(); i++) {
+                String user = purchasedList.get(i)[2];
+                String cost = purchasedList.get(i)[1];
+                double cost1 = (Integer.parseInt(cost)/100);
+
+               if (!hs.isEmpty() && hs.containsKey(user)) {
+                   double currentCost =  hs.get(user);
+                   hs.put(user, currentCost + cost1);
+               } else {
+                   hs.put(user, cost1);
+               }
+
+            }
+            String everything = "";
+            for (Map.Entry<String, Double> entry : hs.entrySet()) {
+               String userView =  entry.getKey();
+               double priceView =  entry.getValue();
+               everything += "User: " + userView + "  Total purchase Amount: $" + priceView + '\n';
+
+            }
+            TextView roommate = findViewById(R.id.person1);
+            roommate.setText(everything);
+            });
 
 
-        addItem.setOnClickListener(e -> {
-            input =  findViewById(R.id.editText);
-            String item = input.getText().toString();
-            myRef.child(item).setValue(item)
-            .addOnSuccessListener( new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // Show a quick confirmation
-                    Toast.makeText(getApplicationContext(), "Item added to shopping List! " + item,
-                            Toast.LENGTH_SHORT).show();
-
-                    // Clear the EditTexts for next use.
-                    input.setText("");
-
-                }
-            })
-                    .addOnFailureListener( new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(getApplicationContext(), "FAILED to add item added to shopping List: " + item,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            finish();
-            startActivity(getIntent());
-
-
-        });
-        purchaseList.setOnClickListener(e-> {
-            Intent intent = new Intent(this, PurchasedListManagementActivity.class);
-            startActivity(intent);
-        });
 
         myRef.addListenerForSingleValueEvent( new ValueEventListener() {
-
             @Override
             public void onDataChange( DataSnapshot snapshot ) {
                 // Once we have a DataSnapshot object, knowing that this is a list,
                 // we need to iterate over the elements and place them on a List.
                 Log.d( "ENTER", "ENTERED LISTENER ");
                 for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
-                    String listItem = postSnapshot.getValue().toString();
-                    shoppingList.add(listItem);
-                    Log.d( DEBUG_TAG, "ShoppingManagementActivity.onCreate(): added: " + listItem );
+                    String itemName = postSnapshot.getKey();
+                    Log.d("ITEM REFERENCE: ", itemName);
+                    String itemPrice = postSnapshot.child("price").getValue().toString();
+                    String itemEmail = postSnapshot.child("email").getValue().toString();
+                    String[] addArray = new String[3];
+                    addArray[0] = itemName;
+                    addArray[1] = itemPrice;
+                    addArray[2] = itemEmail;
+                    purchasedList.add(addArray);
+                    Log.d( DEBUG_TAG, "ShoppingManagementActivity.onCreate(): added: " + addArray.toString() );
                 }
                 Log.d( DEBUG_TAG, "ReviewJobLeadsActivity.onCreate(): setting recyclerAdapter" );
 
                 // Now, create a JobLeadRecyclerAdapter to populate a ReceyclerView to display the job leads.
-                recyclerAdapter = new ShoppingListRecyclerAdapter( shoppingList);
+                recyclerAdapter = new PurchasedListRecyclerAdapter(purchasedList);
                 recyclerView.setAdapter( recyclerAdapter );
             }
             @Override
@@ -149,6 +147,6 @@ public class ShoppingManagementActivity extends AppCompatActivity {
 
     }
 
-    }
+}
 
 

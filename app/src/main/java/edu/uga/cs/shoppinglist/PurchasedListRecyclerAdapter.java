@@ -28,14 +28,14 @@ import java.util.List;
 /**
  * This is an adapter class for the RecyclerView to show all job leads.
  */
-public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingListRecyclerAdapter.ShoppingListHolder> {
+public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<PurchasedListRecyclerAdapter.ShoppingListHolder> {
 
     public static final String DEBUG_TAG = "JobLeadRecyclerAdapter";
 
-    private List<String> shoppingList;
+    private List<String[]> shoppingList;
 
 
-    public ShoppingListRecyclerAdapter( List<String> shoppingList ) {
+    public PurchasedListRecyclerAdapter( List<String[]> shoppingList ) {
         this.shoppingList = shoppingList;
     }
 
@@ -43,17 +43,17 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
     class ShoppingListHolder extends RecyclerView.ViewHolder {
         private Button purchaseButton;
 
-        TextView item;
+        TextView item, price, email;
         String m_Text = "";
+
 
 
         public ShoppingListHolder(View itemView ) {
             super(itemView);
 
-
             item = (TextView) itemView.findViewById(R.id.itemNamePurchase);
-            purchaseButton = (Button) itemView.findViewById(R.id.purchaseButton);
-
+            price = (TextView) itemView.findViewById(R.id.price);
+            email = (TextView) itemView.findViewById(R.id.email);
 
 
         }
@@ -61,23 +61,27 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
 
     @Override
     public ShoppingListHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.list_item, parent, false );
+        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.purchase_list_item, parent, false );
         return new ShoppingListHolder( view );
     }
 
     // This method fills in the values of the Views to show a JobLead
     @Override
     public void onBindViewHolder( ShoppingListHolder holder, int position ) {
-        String itemName = shoppingList.get(position);
+        String itemName = shoppingList.get(position)[0];
+        String itemPrice = shoppingList.get(position)[1];
+        String itemEmail = shoppingList.get(position)[2];
 
-        Log.d( DEBUG_TAG, "onBindViewHolder: " + itemName );
+
+        Log.d(DEBUG_TAG, "onBindViewHolder: " + itemName);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("purchased");
-        DatabaseReference room = database.getReference("room");
         DatabaseReference listRef = database.getReference("item");
 
-        holder.item.setText( itemName);
-        holder.purchaseButton.setOnClickListener(e -> {
+        holder.item.setText(itemName);
+        holder.price.setText(itemPrice);
+        holder.email.setText(itemEmail);
+        /*holder.purchaseButton.setOnClickListener(e -> {
 
             myRef.child(itemName).setValue(itemName)
                     .addOnSuccessListener( new OnSuccessListener<Void>() {
@@ -100,15 +104,11 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    holder.m_Text = input.getText().toString().replace(".","");
-                                    int numerical = Integer.parseInt(holder.m_Text);
+                                    holder.m_Text = input.getText().toString();
                                     myRef.child(itemName).child("price").setValue(holder.m_Text);
                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                                   //String name = user.getDisplayName();
+                                    //String name = user.getDisplayName();
                                     String email = user.getEmail();
-                                   int atIndex =  email.indexOf("@");
-                                   email = email.substring(0, atIndex);
                                     myRef.child(itemName).child("email").setValue(email);
                                 }
                             });
@@ -136,13 +136,15 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
+*/
+      /*  });
+    }*/
 
-        });
     }
-
 
     @Override
     public int getItemCount() {
         return shoppingList.size();
     }
 }
+
