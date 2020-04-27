@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PurchasedListManagementActivity"></activity>
+        <activity android:name=".PurchasedListManagementActivity" android:parentActivityName=".ShoppingManagementActivity"></activity>
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".ShoppingManagementActivity" />
         <activity android:name=".MainActivity">

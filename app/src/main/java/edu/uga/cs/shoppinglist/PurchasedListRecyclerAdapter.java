@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -71,6 +72,10 @@ public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<Purchased
         String itemName = shoppingList.get(position)[0];
         String itemPrice = shoppingList.get(position)[1];
         String itemEmail = shoppingList.get(position)[2];
+        double doubPrice = (double) (Integer.parseInt(itemPrice))/100;
+        DecimalFormat df = new DecimalFormat("#0.00");
+
+        String price = "$ " + df.format(doubPrice);
 
 
         Log.d(DEBUG_TAG, "onBindViewHolder: " + itemName);
@@ -79,7 +84,7 @@ public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<Purchased
         DatabaseReference listRef = database.getReference("item");
 
         holder.item.setText(itemName);
-        holder.price.setText(itemPrice);
+        holder.price.setText(price);
         holder.email.setText(itemEmail);
         /*holder.purchaseButton.setOnClickListener(e -> {
 
@@ -136,8 +141,7 @@ public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<Purchased
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
-*/
-      /*  });
+ });
     }*/
 
     }

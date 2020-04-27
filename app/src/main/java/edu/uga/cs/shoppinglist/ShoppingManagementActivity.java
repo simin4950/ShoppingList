@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -83,30 +86,56 @@ public class ShoppingManagementActivity extends AppCompatActivity {
 
 
         addItem.setOnClickListener(e -> {
-            input =  findViewById(R.id.editText);
-            String item = input.getText().toString();
-            myRef.child(item).setValue(item)
-            .addOnSuccessListener( new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // Show a quick confirmation
-                    Toast.makeText(getApplicationContext(), "Item added to shopping List! " + item,
-                            Toast.LENGTH_SHORT).show();
 
-                    // Clear the EditTexts for next use.
-                    input.setText("");
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enter the product");
+
+// Set up the input
+            final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String item = input.getText().toString();
+                    myRef.child(item).setValue(item)
+                            .addOnSuccessListener( new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    // Show a quick confirmation
+                                    Toast.makeText(getApplicationContext(), item + " added to shopping List! ",
+                                            Toast.LENGTH_SHORT).show();
+
+                                    // Clear the EditTexts for next use.
+                                    input.setText("");
+
+                                }
+                            })
+                            .addOnFailureListener( new OnFailureListener() {
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(getApplicationContext(), item + " was not added to shopping List: " ,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    finish();
+                    startActivity(getIntent());
 
                 }
-            })
-                    .addOnFailureListener( new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(getApplicationContext(), "FAILED to add item added to shopping List: " + item,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            finish();
-            startActivity(getIntent());
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+
 
 
         });

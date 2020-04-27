@@ -5,18 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/plainnewcropped"
     tools:context=".ShoppingManagementActivity">
 
+
+    <TextView
+        android:id="@+id/costHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="Cost per Roommate"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/settleView"
         android:layout_width="match_parent"
-        android:layout_height="374dp" />
+        android:layout_height="327dp" />
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:minWidth="160dp"
         android:orientation="horizontal">
 
         <Button
@@ -24,20 +39,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxWidth="30dp"
             android:text="View price by user" />
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/costHeader"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="Cost per Roommate" />
-
-    <TextView
         android:id="@+id/person1"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:text="TextView" />
+        android:layout_height="116dp"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/realSettle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Settle" />
 
 </LinearLayout>

@@ -5,49 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/plainnewcropped"
     tools:context=".ShoppingManagementActivity">
 
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/settleView"
-            android:layout_width="match_parent"
-            android:layout_height="475dp"
-            />
-
-
-
-    <EditText
-        android:id="@+id/editText"
+    <TextView
+        android:id="@+id/costHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Add an item"
-        android:inputType="textPersonName" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="TextView" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/settleView"
+        android:layout_width="match_parent"
+        android:layout_height="493dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="59dp"
+        android:layout_gravity="center|center_horizontal"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/button"
-            android:layout_width="199dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginRight="60dp"
+            android:foregroundGravity="center_vertical|center"
             android:text="Add Item" />
 
         <Button
             android:id="@+id/settleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center|center_horizontal"
+            android:foregroundGravity="center_vertical|center"
             android:text="Purchased" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/costHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
 
 </LinearLayout>

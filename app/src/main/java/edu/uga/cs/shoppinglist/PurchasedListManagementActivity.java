@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,7 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private Button settleButton;
+    private Button costButton, settleButton;
     private EditText input;
 
 
@@ -69,8 +70,8 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
             }
         });
 
-        settleButton = findViewById(R.id.settleButton);
-
+        costButton = findViewById(R.id.settleButton);
+        settleButton = findViewById(R.id.realSettle);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("purchased");
         recyclerView = (RecyclerView) findViewById(R.id.settleView);
@@ -79,26 +80,37 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this );
         recyclerView.setLayoutManager( layoutManager );
         purchasedList = new ArrayList<>();
-
         settleButton.setOnClickListener(e-> {
+            purchasedList.clear();
+            DatabaseReference listRef = database.getReference("purchased");
+            listRef.removeValue();
+            finish();
+            startActivity(getIntent());
+        });
+        costButton.setOnClickListener(e-> {
+            hs.put("simin4950", 0.00);
+            hs.put("rnbowsky", 0.00);
+            hs.put("soni.ishita", 0.00);
             for (int i = 0; i < purchasedList.size(); i++) {
                 String user = purchasedList.get(i)[2];
                 String cost = purchasedList.get(i)[1];
-                double cost1 = (Integer.parseInt(cost)/100);
+                Log.d("COST: " , "" + cost);
+                double cost1 =(double) (Integer.parseInt(cost))/100;
+                Log.d("PRICE: $", "" + cost1);
 
-               if (!hs.isEmpty() && hs.containsKey(user)) {
+
                    double currentCost =  hs.get(user);
                    hs.put(user, currentCost + cost1);
-               } else {
-                   hs.put(user, cost1);
-               }
+
 
             }
             String everything = "";
             for (Map.Entry<String, Double> entry : hs.entrySet()) {
                String userView =  entry.getKey();
                double priceView =  entry.getValue();
-               everything += "User: " + userView + "  Total purchase Amount: $" + priceView + '\n';
+                DecimalFormat df = new DecimalFormat("#0.00");
+
+               everything += "User: " + userView + "  Total purchase Amount: $ " + df.format(priceView) + '\n';
 
             }
             TextView roommate = findViewById(R.id.person1);
