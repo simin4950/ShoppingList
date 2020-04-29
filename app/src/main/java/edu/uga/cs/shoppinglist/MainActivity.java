@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
-* MainActivity class acts as a SplashScreen for the ShoppingList
+* MainActivity class acts as a SplashScreen for the ShoppingListApp
  *
  * @Author Ishita Soni
  * @Author Simin Savani
