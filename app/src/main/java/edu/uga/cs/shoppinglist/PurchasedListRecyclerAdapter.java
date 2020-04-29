@@ -27,7 +27,9 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 /**
- * This is an adapter class for the RecyclerView to show all job leads.
+ * This is an adapter class for the RecyclerView to show all purchased items.
+ * @author Ishita Soni
+ * @author SImin Savani
  */
 public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<PurchasedListRecyclerAdapter.ShoppingListHolder> {
 
@@ -35,54 +37,70 @@ public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<Purchased
 
     private List<String[]> shoppingList;
 
-
+    /**
+    * PurchasedListRecyclerAdapter is a constructor that acceppted the List from the 
+    * PurchasedListManagement Activity
+    * @param shoppingList
+    */
     public PurchasedListRecyclerAdapter( List<String[]> shoppingList ) {
         this.shoppingList = shoppingList;
     }
 
     // The adapter must have a ViewHolder class to "hold" one item to show.
     class ShoppingListHolder extends RecyclerView.ViewHolder {
+        // Elements in layout
         private Button purchaseButton;
-
         TextView item, price, email;
+        
+        // String that will hold content for display 
         String m_Text = "";
 
-
-
+        /**
+        * ShoppingListHolder constructor holds the elements in the layout
+        * to output to the view 
+        * @param itemView
+        */
         public ShoppingListHolder(View itemView ) {
             super(itemView);
-
+            
+            // Items from the layout
             item = (TextView) itemView.findViewById(R.id.itemNamePurchase);
             price = (TextView) itemView.findViewById(R.id.price);
             email = (TextView) itemView.findViewById(R.id.email);
-
-
         }
     }
 
+    /**
+    * onCreateViewHolder creates a ViewHolder to output it to the list layout
+    * @param parent, viewType
+    */
     @Override
     public ShoppingListHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
         View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.purchase_list_item, parent, false );
         return new ShoppingListHolder( view );
     }
 
-    // This method fills in the values of the Views to show a JobLead
+    /**
+    * onBindViewHOlder fills in the values of the View to show an Item
+    */
     @Override
     public void onBindViewHolder( ShoppingListHolder holder, int position ) {
+        // Retrieve details from shoppingList list
         String itemName = shoppingList.get(position)[0];
         String itemPrice = shoppingList.get(position)[1];
         String itemEmail = shoppingList.get(position)[2];
         double doubPrice = (double) (Integer.parseInt(itemPrice))/100;
         DecimalFormat df = new DecimalFormat("#0.00");
-
         String price = "$ " + df.format(doubPrice);
 
-
         Log.d(DEBUG_TAG, "onBindViewHolder: " + itemName);
+        
+        // Object references to the DB
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("purchased");
         DatabaseReference listRef = database.getReference("item");
-
+        
+        // Set the details of the itenm to the holder to display 
         holder.item.setText(itemName);
         holder.price.setText(price);
         holder.email.setText(itemEmail);
@@ -146,6 +164,9 @@ public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<Purchased
 
     }
 
+    /**
+    * getItemCount is a method that returns the number of items in the list
+    */
     @Override
     public int getItemCount() {
         return shoppingList.size();
