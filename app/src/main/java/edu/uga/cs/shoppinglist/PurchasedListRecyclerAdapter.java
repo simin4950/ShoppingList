@@ -82,6 +82,7 @@ public class PurchasedListRecyclerAdapter extends RecyclerView.Adapter<Purchased
 
     /**
     * onBindViewHOlder fills in the values of the View to show an Item
+    * @param holder, position 
     */
     @Override
     public void onBindViewHolder( ShoppingListHolder holder, int position ) {
