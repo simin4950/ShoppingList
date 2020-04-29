@@ -50,7 +50,7 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-    // Variables for collecting and storing data
+    // Variables for collecting and displaying data
     private List<String[]> purchasedList;
     private HashMap<String, Double> hs = new HashMap<>();
 
@@ -63,7 +63,7 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchased_list_management);
         
-        // Find signed in text vie3w 
+        // Find signed in text view 
         signedInTextView = findViewById( R.id.costHeader);
 
         // Setup a listener for a change in the sign in status (authentication status change)
