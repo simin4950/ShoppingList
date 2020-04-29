@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* MainActivity class acts as a SplashScreen for the QuizApp
+* PurchasedListManagementActivity class manages the purchase list and the 
+* total cost by user
  *
  * @Author Ishita Soni
  * @Author Simin Savani
