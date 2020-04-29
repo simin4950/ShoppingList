@@ -29,28 +29,43 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* PurchasedListManagementActivity class manages the shopping list
+ *
+ * @Author Ishita Soni
+ * @Author Simin Savani
+*/
 public class ShoppingManagementActivity extends AppCompatActivity {
+    // Variable for debugging purpose
     private static final String DEBUG_TAG = "ManagementActivity";
 
+    // Elements on layout
     private TextView signedInTextView;
 
+    // Firebase objects 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private Button addItem, purchaseList;
     private EditText input;
 
-
+    // RecyclerView layout elements 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter recyclerAdapter;
 
+    // Variables for collecting and displaying data
     private List<String> shoppingList;
 
+    /**
+    * onCreate is a method that creates the view for ShoppingManagementActivity.
+    * @param savedInstanceState
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_management);
 
+        // Find signed in text vie3w 
         signedInTextView = findViewById( R.id.costHeader);
 
         // Setup a listener for a change in the sign in status (authentication status change)
@@ -73,8 +88,11 @@ public class ShoppingManagementActivity extends AppCompatActivity {
             }
         });
 
+        // Find elements on layout 
         addItem = findViewById(R.id.button);
         purchaseList = findViewById(R.id.settleButton);
+        
+        // Reference object to Firebase and Database 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("item");
         recyclerView = (RecyclerView) findViewById(R.id.settleView);
@@ -84,20 +102,19 @@ public class ShoppingManagementActivity extends AppCompatActivity {
         recyclerView.setLayoutManager( layoutManager );
         shoppingList = new ArrayList<String>();
 
-
+        // Listener for add button 
         addItem.setOnClickListener(e -> {
-
-
+            // Pop-up dialog style object
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enter the product");
 
-// Set up the input
+            // Set up the input
             final EditText input = new EditText(this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
-// Set up the buttons
+            // Set up the buttons
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -135,15 +152,15 @@ public class ShoppingManagementActivity extends AppCompatActivity {
             });
 
             builder.show();
-
-
-
         });
+        
+        // Listen for purchase button
         purchaseList.setOnClickListener(e-> {
             Intent intent = new Intent(this, PurchasedListManagementActivity.class);
             startActivity(intent);
         });
 
+        // Listnener for DatabaseReference         
         myRef.addListenerForSingleValueEvent( new ValueEventListener() {
 
             @Override
@@ -167,14 +184,6 @@ public class ShoppingManagementActivity extends AppCompatActivity {
                 System.out.println("The read failed: " + databaseError.getMessage());
             }
         } );
-
-
-
-        // get a Firebase DB instance reference
-
-
-
-
 
     }
 
