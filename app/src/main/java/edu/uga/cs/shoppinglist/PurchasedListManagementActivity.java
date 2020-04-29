@@ -25,29 +25,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+* MainActivity class acts as a SplashScreen for the QuizApp
+ *
+ * @Author Ishita Soni
+ * @Author Simin Savani
+*/
 public class PurchasedListManagementActivity extends AppCompatActivity {
+    // Variable for debugging purpose
     private static final String DEBUG_TAG = "ManagementActivity";
 
+    // Elements on layout
     private TextView signedInTextView;
-
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
     private Button costButton, settleButton;
     private EditText input;
 
-
+    // RecyclerView layout elements 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter recyclerAdapter;
+    
+    // Firebase objects 
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
+    // Variables for collecting and storing data
     private List<String[]> purchasedList;
     private HashMap<String, Double> hs = new HashMap<>();
 
+    /**
+    * onCreate is a method that creates the view for PurchasedListManagementActivity.
+    * @param savedInstanceState
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchased_list_management);
-
+        
+        // Find signed in text vie3w 
         signedInTextView = findViewById( R.id.costHeader);
 
         // Setup a listener for a change in the sign in status (authentication status change)
@@ -70,56 +85,69 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
             }
         });
 
+        // Find elements on layout 
         costButton = findViewById(R.id.settleButton);
         settleButton = findViewById(R.id.realSettle);
+        recyclerView = (RecyclerView) findViewById(R.id.settleView);
+        
+        // Reference object to Firebase and Database 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("purchased");
-        recyclerView = (RecyclerView) findViewById(R.id.settleView);
 
         // use a linear layout manager for the recycler view
         layoutManager = new LinearLayoutManager(this );
         recyclerView.setLayoutManager( layoutManager );
         purchasedList = new ArrayList<>();
+        
+        // Listener for settle button 
         settleButton.setOnClickListener(e-> {
+            // clears DB and purchase list
             purchasedList.clear();
             DatabaseReference listRef = database.getReference("purchased");
             listRef.removeValue();
+            
+            // Resets view 
             finish();
             startActivity(getIntent());
         });
+        
+        // Listener for cost button
         costButton.setOnClickListener(e-> {
             hs.put("simin4950", 0.00);
             hs.put("rnbowsky", 0.00);
             hs.put("soni.ishita", 0.00);
+            
+            // Get total cost for each user and store this accordingly
             for (int i = 0; i < purchasedList.size(); i++) {
                 String user = purchasedList.get(i)[2];
                 String cost = purchasedList.get(i)[1];
                 Log.d("COST: " , "" + cost);
                 double cost1 =(double) (Integer.parseInt(cost))/100;
                 Log.d("PRICE: $", "" + cost1);
-
-
-                   double currentCost =  hs.get(user);
-                   hs.put(user, currentCost + cost1);
-
-
+                double currentCost =  hs.get(user);
+                hs.put(user, currentCost + cost1);
             }
+            
+            // Get price, user, and item to display in view 
             String everything = "";
             for (Map.Entry<String, Double> entry : hs.entrySet()) {
                String userView =  entry.getKey();
                double priceView =  entry.getValue();
                 DecimalFormat df = new DecimalFormat("#0.00");
-
                everything += "User: " + userView + "  Total purchase Amount: $ " + df.format(priceView) + '\n';
-
             }
+            // Output total cost to the view 
             TextView roommate = findViewById(R.id.person1);
             roommate.setText(everything);
             });
 
 
-
+        // Listnener for DatabaseReference 
         myRef.addListenerForSingleValueEvent( new ValueEventListener() {
+            /**
+            * onDataChnage is method called when there has been a change to the DB
+            * @param snapshot
+            */
             @Override
             public void onDataChange( DataSnapshot snapshot ) {
                 // Once we have a DataSnapshot object, knowing that this is a list,
@@ -139,23 +167,20 @@ public class PurchasedListManagementActivity extends AppCompatActivity {
                 }
                 Log.d( DEBUG_TAG, "ReviewJobLeadsActivity.onCreate(): setting recyclerAdapter" );
 
-                // Now, create a JobLeadRecyclerAdapter to populate a ReceyclerView to display the job leads.
+                // Now, create a PurchasedRecyclerAdapter to populate a ReceyclerView to display the purchased items.
                 recyclerAdapter = new PurchasedListRecyclerAdapter(purchasedList);
                 recyclerView.setAdapter( recyclerAdapter );
             }
+            
+            /**
+            * onCancelled is a method called when an error in the DB has occured
+            * @param databaseError
+            */ 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("The read failed: " + databaseError.getMessage());
             }
         } );
-
-
-
-        // get a Firebase DB instance reference
-
-
-
-
 
     }
 
