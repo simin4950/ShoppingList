@@ -26,7 +26,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.List;
 
 /**
- * This is an adapter class for the RecyclerView to show all job leads.
+ * This is an adapter class for the RecyclerView to show all purchased items.
+ * @author Ishita Soni
+ * @author SImin Savani
  */
 public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingListRecyclerAdapter.ShoppingListHolder> {
 
@@ -34,7 +36,11 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
 
     private List<String> shoppingList;
 
-
+    /**
+    * ShoppingListRecyclerAdapter is a constructor that acceppted the List from the 
+    * ShoppingManagement Activity
+    * @param shoppingList
+    */
     public ShoppingListRecyclerAdapter( List<String> shoppingList ) {
         this.shoppingList = shoppingList;
     }
@@ -42,35 +48,46 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
     // The adapter must have a ViewHolder class to "hold" one item to show.
     class ShoppingListHolder extends RecyclerView.ViewHolder {
         private Button purchaseButton;
-
+        // Elements in layout and string that will hold content for display 
         TextView item;
         String m_Text = "";
 
-
+        /**
+        * ShoppingListHolder constructor holds the elements in the layout
+        * to output to the view 
+        * @param itemView
+        */
         public ShoppingListHolder(View itemView ) {
             super(itemView);
 
-
+            // Items from the layout
             item = (TextView) itemView.findViewById(R.id.itemNamePurchase);
             purchaseButton = (Button) itemView.findViewById(R.id.purchaseButton);
-
-
-
         }
     }
 
+     /**
+    * onCreateViewHolder creates a ViewHolder to output it to the list layout
+    * @param parent, viewType
+    */
     @Override
     public ShoppingListHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
         View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.list_item, parent, false );
         return new ShoppingListHolder( view );
     }
 
-    // This method fills in the values of the Views to show a JobLead
+     /**
+    * onBindViewHOlder fills in the values of the View to show an Item
+    * @param holder, position 
+    */
     @Override
     public void onBindViewHolder( ShoppingListHolder holder, int position ) {
+        // Position of item in the shoppingList
         String itemName = shoppingList.get(position);
 
         Log.d( DEBUG_TAG, "onBindViewHolder: " + itemName );
+        
+        // Object references to the DB
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("purchased");
         DatabaseReference room = database.getReference("room");
@@ -140,7 +157,9 @@ public class ShoppingListRecyclerAdapter extends RecyclerView.Adapter<ShoppingLi
         });
     }
 
-
+    /**
+    * getItemCount is a method that returns the number of items in the list
+    */
     @Override
     public int getItemCount() {
         return shoppingList.size();
