@@ -17,28 +17,48 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-
+/**
+* RegisterActivty class acts as a Register page for new users 
+ *
+ * @Author Ishita Soni
+ * @Author Simin Savani
+*/
 public class RegisterActivity extends AppCompatActivity {
-
     private static final String DEBUG_TAG = "RegisterActivity";
-
+    
+    // Elements from the layout
     private EditText emailEditText;
     private EditText passworEditText;
     private Button   registerButton;
 
+    /**
+    * onCreate is a method that creates the view for RegisterActivity.
+    * @param savedInstanceState
+    */    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        
+        // Set up TextViews on the layout
         emailEditText = (EditText) findViewById( R.id.editText );
         passworEditText = (EditText) findViewById( R.id.editText5 );
-
+        
+        // Set up Button on the layout and add onClick Listener 
         registerButton = (Button) findViewById( R.id.button3 );
         registerButton.setOnClickListener( new RegisterButtonClickListener() );
     }
 
+    /**
+    * RegisterButtonClickListener is a class where onClick is implemented for 
+    * Register button in the layout
+    */
     private class RegisterButtonClickListener implements View.OnClickListener {
+        /**
+        * onClick is a method that implements the action that occurs after 
+        * register button is clicked 
+        * @param view 
+        */
         @Override
         public void onClick(View view) {
             final String email = emailEditText.getText().toString();
